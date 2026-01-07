@@ -231,6 +231,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📊 Competency Frameworks
 
+These are merely included to demonstrate how the app can work with different competencies and specialisms and are in no way how we believe competencies should be. 
+
 ### Software Engineer (SE)
 **21 Competencies across 6 Categories:**
 - **Frontend Development**: Frameworks, HTML/CSS, JavaScript/TypeScript, UI/UX
