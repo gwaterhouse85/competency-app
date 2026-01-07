@@ -10,7 +10,7 @@ We provide security updates for the following versions of CompetencyApp:
 
 ## Reporting a Vulnerability
 
-We take security seriously. If you discover a security vulnerability in CompetencyApp, please report it responsibly:
+If you discover a security vulnerability in CompetencyApp, please report it responsibly:
 
 ### Where to Report
 - **Email**: Create a GitHub issue with the `security` label
@@ -22,12 +22,6 @@ We take security seriously. If you discover a security vulnerability in Competen
 - **Impact**: Potential impact of the vulnerability
 - **Environment**: .NET version, browser, operating system
 - **Suggested Fix**: If you have ideas for fixing the issue
-
-### Response Timeline
-- **Acknowledgment**: Within 48 hours
-- **Initial Assessment**: Within 1 week
-- **Status Updates**: Weekly until resolved
-- **Resolution**: Critical issues within 30 days
 
 ### Security Best Practices
 
@@ -47,19 +41,3 @@ When contributing to CompetencyApp, follow these security guidelines:
 - Keep .NET dependencies up to date
 - Bootstrap and other frontend assets are from trusted sources
 - Regular dependency security audits
-
-## Scope
-
-This security policy covers:
-- CompetencyApp Blazor Server application
-- Client-side JavaScript components
-- JSON configuration files
-- Local storage implementation
-
-## Out of Scope
-
-The following are not covered by this policy:
-- Issues in third-party dependencies (report to respective maintainers)
-- Social engineering attacks
-- Physical access to user devices
-- Browser vulnerabilities
