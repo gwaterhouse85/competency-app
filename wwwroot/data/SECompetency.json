@@ -1,0 +1,395 @@
+{
+  "sliders": [
+    {
+      "id": 1,
+      "name": "frontend_frameworks",
+      "label": "Frontend Frameworks",
+      "minValue": 1,
+      "maxValue": 5,
+      "defaultValue": 3,
+      "step": 1,
+      "category": "Frontend Development",
+      "description": "React, Vue, Angular, Svelte proficiency",
+      "levels": [
+        {
+          "level": 1,
+          "name": "Novice",
+          "description": "Basic understanding of frontend frameworks",
+          "characteristics": ["Can follow tutorials step-by-step", "Requires detailed instructions", "Limited to simple components", "Struggles with debugging"]
+        },
+        {
+          "level": 2,
+          "name": "Advanced Beginner",
+          "description": "Can work with guidance on framework projects",
+          "characteristics": ["Understands component lifecycle", "Can modify existing components", "Needs guidance for complex tasks", "Basic state management"]
+        },
+        {
+          "level": 3,
+          "name": "Competent",
+          "description": "Can independently build complete applications",
+          "characteristics": ["Builds full applications independently", "Understands routing and state management", "Can debug common issues", "Follows best practices with guidance"]
+        },
+        {
+          "level": 4,
+          "name": "Proficient",
+          "description": "Deep understanding with intuitive problem solving",
+          "characteristics": ["Optimizes performance effectively", "Mentors others on framework usage", "Quickly adapts to new framework versions", "Implements complex patterns"]
+        },
+        {
+          "level": 5,
+          "name": "Expert",
+          "description": "Innovates and leads framework architecture decisions",
+          "characteristics": ["Contributes to framework ecosystem", "Designs scalable architecture patterns", "Influences team framework choices", "Creates reusable libraries"]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "html_css",
+      "label": "HTML/CSS",
+      "minValue": 1,
+      "maxValue": 5,
+      "defaultValue": 3,
+      "step": 1,
+      "category": "Frontend Development",
+      "description": "Semantic HTML, CSS Grid, Flexbox, responsive design",
+      "levels": [
+        {
+          "level": 1,
+          "name": "Novice",
+          "description": "Basic HTML tags and simple CSS styling",
+          "characteristics": ["Knows basic HTML tags", "Can apply simple CSS styles", "Copies code from examples", "Limited layout understanding"]
+        },
+        {
+          "level": 2,
+          "name": "Advanced Beginner",
+          "description": "Can create basic responsive layouts",
+          "characteristics": ["Understands box model", "Can use Flexbox basics", "Creates simple responsive designs", "Uses CSS selectors effectively"]
+        },
+        {
+          "level": 3,
+          "name": "Competent",
+          "description": "Proficient in modern CSS and semantic HTML",
+          "characteristics": ["Masters Grid and Flexbox", "Writes semantic HTML", "Implements accessibility features", "Uses CSS methodologies (BEM, etc.)"]
+        },
+        {
+          "level": 4,
+          "name": "Proficient",
+          "description": "Advanced CSS techniques and performance optimization",
+          "characteristics": ["Optimizes CSS performance", "Uses advanced selectors and pseudo-classes", "Implements complex animations", "Cross-browser compatibility expert"]
+        },
+        {
+          "level": 5,
+          "name": "Expert",
+          "description": "CSS architecture and innovative layout solutions",
+          "characteristics": ["Designs CSS architecture for large projects", "Creates innovative layout solutions", "Contributes to CSS standards", "Teaches advanced CSS concepts"]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "javascript",
+      "label": "JavaScript/TypeScript",
+      "minValue": 1,
+      "maxValue": 5,
+      "defaultValue": 3,
+      "step": 1,
+      "category": "Frontend Development",
+      "description": "Modern JS/TS, ES6+, async programming",
+      "levels": [
+        {
+          "level": 1,
+          "name": "Novice",
+          "description": "Basic JavaScript syntax and concepts",
+          "characteristics": ["Understands variables and functions", "Can manipulate DOM elements", "Copies code from tutorials", "Struggles with debugging"]
+        },
+        {
+          "level": 2,
+          "name": "Advanced Beginner",
+          "description": "Can write simple interactive features",
+          "characteristics": ["Uses ES6 features", "Understands promises and async/await", "Can work with APIs", "Basic error handling"]
+        },
+        {
+          "level": 3,
+          "name": "Competent",
+          "description": "Proficient in modern JavaScript and TypeScript",
+          "characteristics": ["Masters closures and scope", "Effective debugging skills", "Understands TypeScript types", "Implements design patterns"]
+        },
+        {
+          "level": 4,
+          "name": "Proficient",
+          "description": "Advanced JavaScript patterns and optimization",
+          "characteristics": ["Optimizes JavaScript performance", "Deep understanding of event loop", "Advanced TypeScript usage", "Teaches JavaScript concepts"]
+        },
+        {
+          "level": 5,
+          "name": "Expert",
+          "description": "JavaScript language expertise and innovation",
+          "characteristics": ["Contributes to JavaScript ecosystem", "Creates JavaScript tools/libraries", "Deep language specification knowledge", "Influences JavaScript best practices"]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "ui_ux",
+      "label": "UI/UX Design",
+      "minValue": 1,
+      "maxValue": 5,
+      "defaultValue": 2,
+      "step": 1,
+      "category": "Frontend Development",
+      "description": "Design principles, accessibility, user experience",
+      "levels": [
+        {
+          "level": 1,
+          "name": "Novice",
+          "description": "Basic awareness of design principles",
+          "characteristics": ["Recognizes good vs bad design", "Can follow design mockups", "Limited color and typography knowledge", "Focuses on functionality over design"]
+        },
+        {
+          "level": 2,
+          "name": "Advanced Beginner",
+          "description": "Can create simple, usable interfaces",
+          "characteristics": ["Understands basic design principles", "Can create simple wireframes", "Basic accessibility awareness", "Uses design systems effectively"]
+        },
+        {
+          "level": 3,
+          "name": "Competent",
+          "description": "Creates well-designed, accessible interfaces",
+          "characteristics": ["Designs complete user interfaces", "Implements accessibility standards", "Conducts basic user testing", "Balances aesthetics and usability"]
+        },
+        {
+          "level": 4,
+          "name": "Proficient",
+          "description": "Advanced UX research and design strategy",
+          "characteristics": ["Conducts user research", "Creates design systems", "Advanced interaction design", "Measures and improves UX metrics"]
+        },
+        {
+          "level": 5,
+          "name": "Expert",
+          "description": "UX leadership and design innovation",
+          "characteristics": ["Leads design strategy", "Innovates interaction patterns", "Influences product direction through design", "Mentors design teams"]
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "server_languages",
+      "label": "Server Languages",
+      "minValue": 1,
+      "maxValue": 5,
+      "defaultValue": 3,
+      "step": 1,
+      "category": "Backend Development",
+      "description": "C#/.NET, Java, Python, Node.js, Go",
+      "levels": [
+        {
+          "level": 1,
+          "name": "Novice",
+          "description": "Basic syntax and simple programs",
+          "characteristics": ["Knows basic syntax", "Can write simple scripts", "Follows tutorials step-by-step", "Limited error handling"]
+        },
+        {
+          "level": 2,
+          "name": "Advanced Beginner",
+          "description": "Can build simple applications with guidance",
+          "characteristics": ["Understands OOP concepts", "Can work with frameworks", "Basic database interactions", "Implements simple APIs"]
+        },
+        {
+          "level": 3,
+          "name": "Competent",
+          "description": "Builds robust server applications independently",
+          "characteristics": ["Designs application architecture", "Implements complex business logic", "Handles errors effectively", "Writes maintainable code"]
+        },
+        {
+          "level": 4,
+          "name": "Proficient",
+          "description": "Advanced patterns and performance optimization",
+          "characteristics": ["Optimizes application performance", "Implements design patterns effectively", "Mentors junior developers", "Designs scalable solutions"]
+        },
+        {
+          "level": 5,
+          "name": "Expert",
+          "description": "Language expertise and architectural leadership",
+          "characteristics": ["Deep language internals knowledge", "Contributes to language ecosystem", "Designs enterprise architectures", "Influences technology choices"]
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "apis_microservices",
+      "label": "APIs & Microservices",
+      "minValue": 1,
+      "maxValue": 10,
+      "defaultValue": 5,
+      "step": 1,
+      "category": "Backend Development",
+      "description": "REST, GraphQL, gRPC, service architecture"
+    },
+    {
+      "id": 7,
+      "name": "databases",
+      "label": "Database Design",
+      "minValue": 1,
+      "maxValue": 10,
+      "defaultValue": 6,
+      "step": 1,
+      "category": "Backend Development",
+      "description": "SQL, NoSQL, database optimization, migrations"
+    },
+    {
+      "id": 8,
+      "name": "authentication",
+      "label": "Authentication & Security",
+      "minValue": 1,
+      "maxValue": 10,
+      "defaultValue": 4,
+      "step": 1,
+      "category": "Backend Development",
+      "description": "OAuth, JWT, security best practices"
+    },
+    {
+      "id": 9,
+      "name": "containerization",
+      "label": "Containerization",
+      "minValue": 1,
+      "maxValue": 10,
+      "defaultValue": 3,
+      "step": 1,
+      "category": "DevOps & Infrastructure",
+      "description": "Docker, Kubernetes, container orchestration"
+    },
+    {
+      "id": 10,
+      "name": "cicd",
+      "label": "CI/CD Pipelines",
+      "minValue": 1,
+      "maxValue": 10,
+      "defaultValue": 4,
+      "step": 1,
+      "category": "DevOps & Infrastructure",
+      "description": "GitHub Actions, Jenkins, Azure DevOps"
+    },
+    {
+      "id": 11,
+      "name": "cloud_platforms",
+      "label": "Cloud Platforms",
+      "minValue": 1,
+      "maxValue": 10,
+      "defaultValue": 3,
+      "step": 1,
+      "category": "DevOps & Infrastructure",
+      "description": "AWS, Azure, GCP services and deployment"
+    },
+    {
+      "id": 12,
+      "name": "monitoring",
+      "label": "Monitoring & Logging",
+      "minValue": 1,
+      "maxValue": 10,
+      "defaultValue": 2,
+      "step": 1,
+      "category": "DevOps & Infrastructure",
+      "description": "Application monitoring, log analysis, alerting"
+    },
+    {
+      "id": 13,
+      "name": "unit_testing",
+      "label": "Unit Testing",
+      "minValue": 1,
+      "maxValue": 10,
+      "defaultValue": 6,
+      "step": 1,
+      "category": "Testing & Quality",
+      "description": "Test-driven development, mocking, coverage"
+    },
+    {
+      "id": 14,
+      "name": "integration_testing",
+      "label": "Integration Testing",
+      "minValue": 1,
+      "maxValue": 10,
+      "defaultValue": 4,
+      "step": 1,
+      "category": "Testing & Quality",
+      "description": "API testing, end-to-end testing, test automation"
+    },
+    {
+      "id": 15,
+      "name": "code_review",
+      "label": "Code Review",
+      "minValue": 1,
+      "maxValue": 10,
+      "defaultValue": 7,
+      "step": 1,
+      "category": "Testing & Quality",
+      "description": "Peer review, code quality standards, feedback"
+    },
+    {
+      "id": 16,
+      "name": "git_version_control",
+      "label": "Git & Version Control",
+      "minValue": 1,
+      "maxValue": 10,
+      "defaultValue": 8,
+      "step": 1,
+      "category": "Tools & Practices",
+      "description": "Branching strategies, merge conflicts, Git workflows"
+    },
+    {
+      "id": 17,
+      "name": "agile_methodologies",
+      "label": "Agile Methodologies",
+      "minValue": 1,
+      "maxValue": 10,
+      "defaultValue": 6,
+      "step": 1,
+      "category": "Tools & Practices",
+      "description": "Scrum, Kanban, sprint planning, retrospectives"
+    },
+    {
+      "id": 18,
+      "name": "documentation",
+      "label": "Technical Documentation",
+      "minValue": 1,
+      "maxValue": 10,
+      "defaultValue": 5,
+      "step": 1,
+      "category": "Tools & Practices",
+      "description": "API docs, architecture diagrams, README files"
+    },
+    {
+      "id": 19,
+      "name": "problem_solving",
+      "label": "Problem Solving",
+      "minValue": 1,
+      "maxValue": 10,
+      "defaultValue": 7,
+      "step": 1,
+      "category": "Soft Skills",
+      "description": "Analytical thinking, debugging, troubleshooting"
+    },
+    {
+      "id": 20,
+      "name": "communication",
+      "label": "Technical Communication",
+      "minValue": 1,
+      "maxValue": 10,
+      "defaultValue": 6,
+      "step": 1,
+      "category": "Soft Skills",
+      "description": "Explaining complex concepts, stakeholder communication"
+    },
+    {
+      "id": 21,
+      "name": "mentoring",
+      "label": "Mentoring & Leadership",
+      "minValue": 1,
+      "maxValue": 10,
+      "defaultValue": 3,
+      "step": 1,
+      "category": "Soft Skills",
+      "description": "Teaching others, team leadership, knowledge sharing"
+    }
+  ]
+}

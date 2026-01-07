@@ -1,0 +1,204 @@
+﻿@using CompetencyApp.Services
+@inject SliderService SliderService
+
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">
+            <span class="oi oi-dashboard me-2"></span>Competency App
+        </a>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</div>
+
+<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
+    <nav class="flex-column">
+        <div class="nav-item px-3 mb-2">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="oi oi-home me-2" aria-hidden="true"></span> Home
+            </NavLink>
+        </div>
+        
+        @foreach (var competencyType in availableCompetencies)
+        {
+            <div class="nav-item px-3 mb-2">
+                <div class="nav-section-header" @onclick="() => ToggleCompetencyMenu(competencyType)" @onclick:stopPropagation="true">
+                    <div class="d-flex align-items-center justify-content-between nav-section-title">
+                        <div>
+                            <span class="oi oi-cog me-2 text-info"></span>
+                            <span class="fw-bold">@SliderService.GetCompetencyDisplayName(competencyType)</span>
+                        </div>
+                        <div class="nav-section-toggle @GetExpandedClass(competencyType)">
+                            <span class="toggle-icon">+</span>
+                        </div>
+                    </div>
+                </div>
+                
+                @if (!GetMenuCollapseState(competencyType))
+                {
+                    <div class="nav-subsection show">
+                        <div class="nav-item ps-4 py-1">
+                            <NavLink class="nav-link nav-sublink" href="@($"/sliders/{competencyType}")">
+                                <span class="oi oi-task me-2 text-primary" aria-hidden="true"></span>
+                                Assessment
+                            </NavLink>
+                        </div>
+                        <div class="nav-item ps-4 py-1">
+                            <NavLink class="nav-link nav-sublink" href="@($"/competency-radar/{competencyType}")">
+                                <span class="oi oi-target me-2 text-success" aria-hidden="true"></span>
+                                Radar Chart
+                            </NavLink>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </nav>
+</div>
+
+<style>
+    .nav-section-header {
+        cursor: pointer;
+        padding: 0.75rem 1rem;
+        margin: 0 -1rem;
+        border-radius: 0.375rem;
+        transition: all 0.2s ease-in-out;
+        background: linear-gradient(135deg, rgba(0, 123, 255, 0.1), rgba(40, 167, 69, 0.1));
+        border-left: 3px solid transparent;
+    }
+
+    .nav-section-header:hover {
+        background: linear-gradient(135deg, rgba(0, 123, 255, 0.2), rgba(40, 167, 69, 0.2));
+        border-left-color: var(--bs-primary);
+        transform: translateX(2px);
+    }
+
+    .nav-section-title {
+        color: #fff;
+        font-size: 0.95rem;
+    }
+
+    .nav-section-toggle {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease-in-out;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .nav-section-toggle.expanded {
+        transform: rotate(45deg);
+        background: rgba(40, 167, 69, 0.8);
+        border-color: rgba(40, 167, 69, 1);
+    }
+
+    .toggle-icon {
+        color: #fff;
+        font-weight: bold;
+        font-size: 14px;
+        line-height: 1;
+    }
+
+    .nav-subsection {
+        margin-top: 0.5rem;
+        opacity: 0;
+        max-height: 0;
+        overflow: hidden;
+        transition: all 0.3s ease-in-out;
+        transform: translateY(-10px);
+    }
+
+    .nav-subsection.show {
+        opacity: 1;
+        max-height: 200px;
+        transform: translateY(0);
+    }
+
+    .nav-sublink {
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+        border-radius: 0.25rem;
+        transition: all 0.2s ease-in-out;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .nav-sublink::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 3px;
+        height: 100%;
+        background: transparent;
+        transition: background 0.2s ease-in-out;
+    }
+
+    .nav-sublink:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateX(3px);
+    }
+
+    .nav-sublink:hover::before {
+        background: var(--bs-info);
+    }
+
+    .nav-sublink.active::before {
+        background: var(--bs-warning);
+    }
+
+    .nav-link {
+        color: rgba(255, 255, 255, 0.9) !important;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .nav-link:hover {
+        color: #fff !important;
+    }
+
+    .navbar-brand {
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+</style>
+
+@code {
+    private bool collapseNavMenu = true;
+    private Dictionary<string, bool> competencyMenuStates = new();
+    private List<string> availableCompetencies = new();
+
+    protected override void OnInitialized()
+    {
+        availableCompetencies = SliderService.GetAvailableCompetencyTypes();
+        
+        // Initialize all competency menus as collapsed
+        foreach (var competencyType in availableCompetencies)
+        {
+            competencyMenuStates[competencyType] = true; // true = collapsed
+        }
+    }
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    
+    private string GetExpandedClass(string competencyType) => GetMenuCollapseState(competencyType) ? "" : "expanded";
+    
+    private bool GetMenuCollapseState(string competencyType)
+    {
+        return competencyMenuStates.GetValueOrDefault(competencyType, true);
+    }
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+    
+    private void ToggleCompetencyMenu(string competencyType)
+    {
+        competencyMenuStates[competencyType] = !competencyMenuStates[competencyType];
+    }
+}

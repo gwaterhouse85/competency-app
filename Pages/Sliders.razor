@@ -1,0 +1,422 @@
+@page "/sliders/{competencyType?}"
+@using CompetencyApp.Data
+@using CompetencyApp.Services
+@inject SliderService SliderService
+@inject IJSRuntime JSRuntime
+
+<PageTitle>@GetPageTitle()</PageTitle>
+
+<h1>@GetPageTitle()</h1>
+<p class="lead">Rate your competency using the Dreyfus Model of skill acquisition (1-5 scale)</p>
+
+@if (sliders == null)
+{
+    <p><em>Loading competencies...</em></p>
+}
+else if (!sliders.Any())
+{
+    <p><em>No competencies configured.</em></p>
+}
+else
+{
+    <div class="row">
+        @foreach (var category in sliders.GroupBy(s => s.Category))
+        {
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">@category.Key</h5>
+                    </div>
+                    <div class="card-body">
+                        @foreach (var slider in category)
+                        {
+                            var currentLevel = GetCurrentLevel(slider);
+                            <div class="mb-4 border-bottom pb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <label for="slider-@slider.Id" class="form-label fw-bold mb-0">
+                                        @slider.Label
+                                    </label>
+                                    <span class="badge bg-@GetLevelBadgeColor(GetSliderValue(slider.Id)) fs-6">
+                                        @(currentLevel?.Name ?? "Unknown")
+                                    </span>
+                                </div>
+                                
+                                <input type="range" 
+                                       class="form-range mb-2" 
+                                       id="slider-@slider.Id"
+                                       min="@slider.MinValue" 
+                                       max="@slider.MaxValue" 
+                                       step="@slider.Step"
+                                       value="@GetSliderValue(slider.Id)"
+                                       @onchange="@(e => OnSliderChange(slider.Id, e))" 
+                                       @oninput="@(e => OnSliderInput(slider.Id, e))" />
+                                
+                                <div class="row small mb-2">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        <div class="col text-center">
+                                            <span class="text-muted">@GetLevelName(i)</span>
+                                        </div>
+                                    }
+                                </div>
+
+                                @if (currentLevel != null)
+                                {
+                                    <div class="alert alert-light border p-2 mb-2">
+                                        <strong>@currentLevel.Name:</strong> @currentLevel.Description
+                                        @if (currentLevel.Characteristics.Any())
+                                        {
+                                            <ul class="mb-0 mt-1 small">
+                                                @foreach (var characteristic in currentLevel.Characteristics)
+                                                {
+                                                    <li>@characteristic</li>
+                                                }
+                                            </ul>
+                                        }
+                                    </div>
+                                }
+                                
+                                <div class="mt-2">
+                                    <label for="note-@slider.Id" class="form-label small text-secondary">
+                                        Personal Notes & Examples:
+                                    </label>
+                                    <textarea class="form-control form-control-sm" 
+                                              id="note-@slider.Id"
+                                              rows="2" 
+                                              placeholder="Add specific examples, experiences, or goals for this competency level..."
+                                              value="@GetSliderNote(slider.Id)"
+                                              @onchange="@(e => OnNoteChange(slider.Id, e))"></textarea>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="mt-4">
+        <div class="row">
+            <div class="col-md-8">
+                <h4>Competency Summary</h4>
+                <div class="alert alert-info">
+                    <div class="row">
+                        @foreach (var category in sliders.GroupBy(s => s.Category))
+                        {
+                            <div class="col-md-6 mb-2">
+                                <strong>@category.Key:</strong>
+                                <div class="ms-2">
+                                    @foreach (var slider in category)
+                                    {
+                                        var level = GetCurrentLevel(slider);
+                                        <div class="small">
+                                            @slider.Label: 
+                                            <span class="badge bg-@GetLevelBadgeColor(GetSliderValue(slider.Id)) me-1">
+                                                @(level?.Name ?? "Unknown")
+                                            </span>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <h4>Actions</h4>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-warning" @onclick="ResetValues">
+                        <i class="oi oi-reload"></i> Reset to Defaults
+                    </button>
+                    <button class="btn btn-info" @onclick="ExportData">
+                        <i class="oi oi-data-transfer-download"></i> Export Assessment
+                    </button>
+                    <button class="btn btn-danger" @onclick="ClearStorage">
+                        <i class="oi oi-trash"></i> Clear All Data
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public string? CompetencyType { get; set; } = "SE";
+    
+    private List<SliderModel>? sliders;
+    private Dictionary<int, int> sliderValues = new();
+    private Dictionary<int, string> sliderNotes = new();
+    private string VALUES_STORAGE_KEY => $"slider_values_{CompetencyType}";
+    private string NOTES_STORAGE_KEY => $"slider_notes_{CompetencyType}";
+
+    protected override async Task OnInitializedAsync()
+    {
+        sliders = await SliderService.GetSlidersAsync(CompetencyType ?? "SE");
+        
+        if (sliders != null)
+        {
+            await LoadDataFromStorage();
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        // Reload data when competency type changes
+        sliders = await SliderService.GetSlidersAsync(CompetencyType ?? "SE");
+        sliderValues.Clear();
+        sliderNotes.Clear();
+        
+        if (sliders != null)
+        {
+            await LoadDataFromStorage();
+        }
+        
+        StateHasChanged();
+    }
+
+    private string GetPageTitle()
+    {
+        var displayName = SliderService.GetCompetencyDisplayName(CompetencyType ?? "SE");
+        return $"{displayName} Competency Assessment";
+    }
+
+    private async Task LoadDataFromStorage()
+    {
+        try
+        {
+            // Load slider values
+            var savedValues = await JSRuntime.InvokeAsync<string>("localStorageHelper.getCompetencyValues");
+            if (!string.IsNullOrEmpty(savedValues))
+            {
+                var storedValues = System.Text.Json.JsonSerializer.Deserialize<Dictionary<int, int>>(savedValues);
+                if (storedValues != null)
+                {
+                    sliderValues = storedValues;
+                }
+            }
+
+            // Load slider notes
+            var savedNotes = await JSRuntime.InvokeAsync<string>("localStorageHelper.getCompetencyNotes");
+            if (!string.IsNullOrEmpty(savedNotes))
+            {
+                var storedNotes = System.Text.Json.JsonSerializer.Deserialize<Dictionary<int, string>>(savedNotes);
+                if (storedNotes != null)
+                {
+                    sliderNotes = storedNotes;
+                }
+            }
+            
+            // Ensure all sliders have values and notes (use defaults for missing ones)
+            foreach (var slider in sliders!)
+            {
+                if (!sliderValues.ContainsKey(slider.Id))
+                {
+                    sliderValues[slider.Id] = slider.DefaultValue;
+                }
+                if (!sliderNotes.ContainsKey(slider.Id))
+                {
+                    sliderNotes[slider.Id] = string.Empty;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            await JSRuntime.InvokeVoidAsync("console.error", "Error loading from local storage:", ex.Message);
+            
+            // Fallback to default values
+            foreach (var slider in sliders!)
+            {
+                sliderValues[slider.Id] = slider.DefaultValue;
+                sliderNotes[slider.Id] = string.Empty;
+            }
+        }
+    }
+
+    private async Task SaveValuesToStorage()
+    {
+        try
+        {
+            var json = System.Text.Json.JsonSerializer.Serialize(sliderValues);
+            await JSRuntime.InvokeVoidAsync("localStorageHelper.setCompetencyValues", json);
+        }
+        catch (Exception ex)
+        {
+            await JSRuntime.InvokeVoidAsync("console.error", "Error saving values to local storage:", ex.Message);
+        }
+    }
+
+    private async Task SaveNotesToStorage()
+    {
+        try
+        {
+            var json = System.Text.Json.JsonSerializer.Serialize(sliderNotes);
+            await JSRuntime.InvokeVoidAsync("localStorageHelper.setCompetencyNotes", json);
+        }
+        catch (Exception ex)
+        {
+            await JSRuntime.InvokeVoidAsync("console.error", "Error saving notes to local storage:", ex.Message);
+        }
+    }
+
+    private int GetSliderValue(int sliderId)
+    {
+        return sliderValues.TryGetValue(sliderId, out var value) ? value : 0;
+    }
+
+    private string GetSliderNote(int sliderId)
+    {
+        return sliderNotes.TryGetValue(sliderId, out var note) ? note : string.Empty;
+    }
+
+    private CompetencyLevel? GetCurrentLevel(SliderModel slider)
+    {
+        var currentValue = GetSliderValue(slider.Id);
+        return slider.Levels.FirstOrDefault(l => l.Level == currentValue);
+    }
+
+    private string GetLevelName(int level)
+    {
+        return level switch
+        {
+            1 => "Novice",
+            2 => "Adv. Beginner",
+            3 => "Competent",
+            4 => "Proficient",
+            5 => "Expert",
+            _ => "Unknown"
+        };
+    }
+
+    private string GetLevelBadgeColor(int level)
+    {
+        return level switch
+        {
+            1 => "secondary",
+            2 => "warning",
+            3 => "primary",
+            4 => "info",
+            5 => "success",
+            _ => "secondary"
+        };
+    }
+
+    private async Task OnSliderInput(int sliderId, ChangeEventArgs e)
+    {
+        // This provides real-time updates while dragging
+        if (int.TryParse(e.Value?.ToString(), out var newValue))
+        {
+            sliderValues[sliderId] = newValue;
+            StateHasChanged();
+        }
+    }
+
+    private async Task OnSliderChange(int sliderId, ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out var newValue))
+        {
+            sliderValues[sliderId] = newValue;
+            await SaveValuesToStorage();
+            StateHasChanged();
+            
+            var slider = sliders?.FirstOrDefault(s => s.Id == sliderId);
+            var level = GetCurrentLevel(slider);
+            if (slider != null && level != null)
+            {
+                await JSRuntime.InvokeVoidAsync("console.log", $"{slider.Label} changed to: {level.Name} (Level {newValue})");
+            }
+        }
+    }
+
+    private async Task OnNoteChange(int sliderId, ChangeEventArgs e)
+    {
+        var newNote = e.Value?.ToString() ?? string.Empty;
+        sliderNotes[sliderId] = newNote;
+        await SaveNotesToStorage();
+        
+        var slider = sliders?.FirstOrDefault(s => s.Id == sliderId);
+        if (slider != null)
+        {
+            await JSRuntime.InvokeVoidAsync("console.log", $"Note updated for {slider.Label}");
+        }
+    }
+
+    private async Task ResetValues()
+    {
+        if (sliders != null)
+        {
+            foreach (var slider in sliders)
+            {
+                sliderValues[slider.Id] = slider.DefaultValue;
+                sliderNotes[slider.Id] = string.Empty;
+            }
+            
+            await SaveValuesToStorage();
+            await SaveNotesToStorage();
+            StateHasChanged();
+            await JSRuntime.InvokeVoidAsync("console.log", "All competency ratings and notes reset to defaults");
+        }
+    }
+
+    private async Task ClearStorage()
+    {
+        await JSRuntime.InvokeVoidAsync("localStorageHelper.clearCompetencyData");
+        
+        if (sliders != null)
+        {
+            foreach (var slider in sliders)
+            {
+                sliderValues[slider.Id] = slider.DefaultValue;
+                sliderNotes[slider.Id] = string.Empty;
+            }
+        }
+        
+        StateHasChanged();
+        await JSRuntime.InvokeVoidAsync("console.log", "Local storage cleared, all data reset to defaults");
+    }
+
+    private async Task ExportData()
+    {
+        try
+        {
+            var exportData = new
+            {
+                exportDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                competencies = sliders?.Select(s => new
+                {
+                    category = s.Category,
+                    name = s.Label,
+                    level = GetSliderValue(s.Id),
+                    levelName = GetCurrentLevel(s)?.Name ?? "Unknown",
+                    levelDescription = GetCurrentLevel(s)?.Description ?? "",
+                    characteristics = GetCurrentLevel(s)?.Characteristics ?? new List<string>(),
+                    notes = GetSliderNote(s.Id),
+                    description = s.Description
+                }).ToArray()
+            };
+
+            var json = System.Text.Json.JsonSerializer.Serialize(exportData, new System.Text.Json.JsonSerializerOptions 
+            { 
+                WriteIndented = true 
+            });
+
+            await JSRuntime.InvokeVoidAsync("console.log", "Competency Export Data:", json);
+            
+            // Create downloadable file
+            await JSRuntime.InvokeVoidAsync("eval", $@"
+                const blob = new Blob([{System.Text.Json.JsonSerializer.Serialize(json)}], {{ type: 'application/json' }});
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'competency-assessment-{DateTime.Now:yyyy-MM-dd}.json';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            ");
+        }
+        catch (Exception ex)
+        {
+            await JSRuntime.InvokeVoidAsync("console.error", "Error exporting data:", ex.Message);
+        }
+    }
+}

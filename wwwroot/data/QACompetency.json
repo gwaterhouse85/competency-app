@@ -1,0 +1,348 @@
+{
+  "sliders": [
+    {
+      "id": 1,
+      "name": "test_planning",
+      "label": "Test Planning & Strategy",
+      "minValue": 1,
+      "maxValue": 5,
+      "defaultValue": 3,
+      "step": 1,
+      "category": "Test Strategy & Planning",
+      "description": "Test strategy development, planning, and risk assessment",
+      "levels": [
+        {
+          "level": 1,
+          "name": "Novice",
+          "description": "Basic understanding of test planning concepts",
+          "characteristics": ["Follows existing test plans", "Requires guidance for test case creation", "Limited risk assessment skills", "Struggles with test estimation"]
+        },
+        {
+          "level": 2,
+          "name": "Advanced Beginner",
+          "description": "Can contribute to test planning with guidance",
+          "characteristics": ["Creates simple test plans", "Identifies basic test scenarios", "Understands test prioritization", "Basic risk identification"]
+        },
+        {
+          "level": 3,
+          "name": "Competent",
+          "description": "Develops comprehensive test plans independently",
+          "characteristics": ["Creates detailed test strategies", "Performs thorough risk analysis", "Manages test estimation effectively", "Coordinates with stakeholders"]
+        },
+        {
+          "level": 4,
+          "name": "Proficient",
+          "description": "Advanced test strategy and complex planning",
+          "characteristics": ["Designs enterprise test strategies", "Leads risk assessment sessions", "Optimizes testing processes", "Mentors junior QA engineers"]
+        },
+        {
+          "level": 5,
+          "name": "Expert",
+          "description": "Test strategy leadership and innovation",
+          "characteristics": ["Defines organizational test standards", "Innovates testing methodologies", "Influences product strategy through testing insights", "Industry thought leadership"]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "manual_testing",
+      "label": "Manual Testing Techniques",
+      "minValue": 1,
+      "maxValue": 5,
+      "defaultValue": 3,
+      "step": 1,
+      "category": "Test Strategy & Planning",
+      "description": "Exploratory testing, test case design, and manual execution",
+      "levels": [
+        {
+          "level": 1,
+          "name": "Novice",
+          "description": "Basic manual testing execution",
+          "characteristics": ["Follows test scripts step-by-step", "Limited exploratory testing", "Basic defect reporting", "Struggles with edge cases"]
+        },
+        {
+          "level": 2,
+          "name": "Advanced Beginner",
+          "description": "Effective test case execution and basic exploration",
+          "characteristics": ["Creates simple test cases", "Basic exploratory testing", "Good defect documentation", "Understands test coverage"]
+        },
+        {
+          "level": 3,
+          "name": "Competent",
+          "description": "Advanced manual testing and exploration techniques",
+          "characteristics": ["Designs comprehensive test cases", "Skilled exploratory testing", "Identifies complex scenarios", "Effective boundary testing"]
+        },
+        {
+          "level": 4,
+          "name": "Proficient",
+          "description": "Expert manual testing with innovative approaches",
+          "characteristics": ["Advanced exploratory techniques", "Risk-based testing expertise", "Usability and accessibility testing", "Cross-platform testing mastery"]
+        },
+        {
+          "level": 5,
+          "name": "Expert",
+          "description": "Manual testing innovation and methodology leadership",
+          "characteristics": ["Develops new testing techniques", "Trains teams on advanced methods", "Contributes to testing frameworks", "Industry recognition in manual testing"]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "test_automation",
+      "label": "Test Automation",
+      "minValue": 1,
+      "maxValue": 5,
+      "defaultValue": 2,
+      "step": 1,
+      "category": "Automation & Tools",
+      "description": "Automated testing frameworks, scripting, and CI/CD integration",
+      "levels": [
+        {
+          "level": 1,
+          "name": "Novice",
+          "description": "Basic automation tool usage",
+          "characteristics": ["Record and playback tools", "Modifies existing scripts", "Limited programming knowledge", "Requires extensive guidance"]
+        },
+        {
+          "level": 2,
+          "name": "Advanced Beginner",
+          "description": "Creates simple automation scripts",
+          "characteristics": ["Writes basic test scripts", "Uses automation frameworks", "Understands locators and assertions", "Basic debugging skills"]
+        },
+        {
+          "level": 3,
+          "name": "Competent",
+          "description": "Develops robust automation frameworks",
+          "characteristics": ["Designs automation architectures", "Implements Page Object Model", "Data-driven testing", "CI/CD integration"]
+        },
+        {
+          "level": 4,
+          "name": "Proficient",
+          "description": "Advanced automation and framework optimization",
+          "characteristics": ["Optimizes test execution", "Cross-browser automation", "API automation expertise", "Performance test automation"]
+        },
+        {
+          "level": 5,
+          "name": "Expert",
+          "description": "Automation strategy and tooling innovation",
+          "characteristics": ["Creates custom automation tools", "Establishes automation standards", "Evaluates and adopts new tools", "Automation ROI optimization"]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "api_testing",
+      "label": "API & Service Testing",
+      "minValue": 1,
+      "maxValue": 5,
+      "defaultValue": 2,
+      "step": 1,
+      "category": "Automation & Tools",
+      "description": "REST/GraphQL API testing, service validation, and contract testing",
+      "levels": [
+        {
+          "level": 1,
+          "name": "Novice",
+          "description": "Basic API testing with tools",
+          "characteristics": ["Uses API testing tools", "Basic HTTP methods understanding", "Simple request/response validation", "Limited JSON/XML knowledge"]
+        },
+        {
+          "level": 2,
+          "name": "Advanced Beginner",
+          "description": "Structured API testing approach",
+          "characteristics": ["Creates API test collections", "Understands authentication", "Basic schema validation", "Error handling testing"]
+        },
+        {
+          "level": 3,
+          "name": "Competent",
+          "description": "Comprehensive API testing and validation",
+          "characteristics": ["End-to-end API testing", "Contract testing", "Performance testing APIs", "Security testing basics"]
+        },
+        {
+          "level": 4,
+          "name": "Proficient",
+          "description": "Advanced API testing and service architecture",
+          "characteristics": ["Microservices testing", "Advanced security testing", "API monitoring", "Service virtualization"]
+        },
+        {
+          "level": 5,
+          "name": "Expert",
+          "description": "API testing strategy and architecture leadership",
+          "characteristics": ["Defines API testing standards", "Advanced contract testing", "API design collaboration", "Testing in service mesh environments"]
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "performance_testing",
+      "label": "Performance Testing",
+      "minValue": 1,
+      "maxValue": 5,
+      "defaultValue": 2,
+      "step": 1,
+      "category": "Specialized Testing",
+      "description": "Load testing, stress testing, and performance optimization",
+      "levels": [
+        {
+          "level": 1,
+          "name": "Novice",
+          "description": "Basic performance testing concepts",
+          "characteristics": ["Understands basic metrics", "Uses simple load testing tools", "Identifies obvious bottlenecks", "Limited analysis skills"]
+        },
+        {
+          "level": 2,
+          "name": "Advanced Beginner",
+          "description": "Structured performance testing execution",
+          "characteristics": ["Creates load test scripts", "Monitors basic metrics", "Interprets test results", "Basic performance requirements"]
+        },
+        {
+          "level": 3,
+          "name": "Competent",
+          "description": "Comprehensive performance testing and analysis",
+          "characteristics": ["Designs performance test strategies", "Advanced metrics analysis", "Performance tuning recommendations", "Capacity planning basics"]
+        },
+        {
+          "level": 4,
+          "name": "Proficient",
+          "description": "Advanced performance engineering",
+          "characteristics": ["Enterprise performance testing", "Advanced profiling tools", "Performance architecture review", "Continuous performance testing"]
+        },
+        {
+          "level": 5,
+          "name": "Expert",
+          "description": "Performance testing leadership and innovation",
+          "characteristics": ["Performance strategy leadership", "Custom tooling development", "Performance culture establishment", "Industry expertise and speaking"]
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "security_testing",
+      "label": "Security Testing",
+      "minValue": 1,
+      "maxValue": 5,
+      "defaultValue": 2,
+      "step": 1,
+      "category": "Specialized Testing",
+      "description": "Security vulnerability testing, penetration testing, and secure coding validation",
+      "levels": [
+        {
+          "level": 1,
+          "name": "Novice",
+          "description": "Basic security testing awareness",
+          "characteristics": ["Understands common vulnerabilities", "Uses security scanning tools", "Basic authentication testing", "Limited threat modeling"]
+        },
+        {
+          "level": 2,
+          "name": "Advanced Beginner",
+          "description": "Structured security testing approach",
+          "characteristics": ["OWASP Top 10 testing", "Input validation testing", "Basic penetration testing", "Security test case design"]
+        },
+        {
+          "level": 3,
+          "name": "Competent",
+          "description": "Comprehensive security testing and validation",
+          "characteristics": ["Advanced vulnerability assessment", "Security automation", "Threat modeling participation", "Security requirements validation"]
+        },
+        {
+          "level": 4,
+          "name": "Proficient",
+          "description": "Advanced security testing and architecture",
+          "characteristics": ["Advanced penetration testing", "Security architecture review", "Compliance testing", "Security tool evaluation"]
+        },
+        {
+          "level": 5,
+          "name": "Expert",
+          "description": "Security testing leadership and innovation",
+          "characteristics": ["Security testing strategy", "Custom security tools", "Security culture leadership", "Industry security expertise"]
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "name": "defect_management",
+      "label": "Defect Management",
+      "minValue": 1,
+      "maxValue": 5,
+      "defaultValue": 3,
+      "step": 1,
+      "category": "Process & Quality",
+      "description": "Bug reporting, tracking, triage, and lifecycle management",
+      "levels": [
+        {
+          "level": 1,
+          "name": "Novice",
+          "description": "Basic defect reporting",
+          "characteristics": ["Reports defects with guidance", "Basic reproduction steps", "Limited severity assessment", "Follows defect templates"]
+        },
+        {
+          "level": 2,
+          "name": "Advanced Beginner",
+          "description": "Effective defect documentation and tracking",
+          "characteristics": ["Clear defect documentation", "Accurate severity/priority", "Good reproduction steps", "Basic defect analysis"]
+        },
+        {
+          "level": 3,
+          "name": "Competent",
+          "description": "Comprehensive defect management and analysis",
+          "characteristics": ["Defect lifecycle management", "Root cause analysis", "Defect prevention strategies", "Stakeholder communication"]
+        },
+        {
+          "level": 4,
+          "name": "Proficient",
+          "description": "Advanced defect management and process optimization",
+          "characteristics": ["Defect metrics analysis", "Process improvement", "Defect triage leadership", "Quality trend analysis"]
+        },
+        {
+          "level": 5,
+          "name": "Expert",
+          "description": "Defect management strategy and innovation",
+          "characteristics": ["Defect management standards", "Tool evaluation and implementation", "Quality culture development", "Industry best practices"]
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "name": "agile_qa",
+      "label": "Agile QA Practices",
+      "minValue": 1,
+      "maxValue": 5,
+      "defaultValue": 3,
+      "step": 1,
+      "category": "Process & Quality",
+      "description": "Agile testing practices, continuous testing, and team collaboration",
+      "levels": [
+        {
+          "level": 1,
+          "name": "Novice",
+          "description": "Basic agile testing participation",
+          "characteristics": ["Participates in agile ceremonies", "Basic user story understanding", "Sprint-based testing", "Limited agile test techniques"]
+        },
+        {
+          "level": 2,
+          "name": "Advanced Beginner",
+          "description": "Effective agile testing contribution",
+          "characteristics": ["User story testing", "Acceptance criteria validation", "Sprint test planning", "Basic BDD understanding"]
+        },
+        {
+          "level": 3,
+          "name": "Competent",
+          "description": "Comprehensive agile testing and collaboration",
+          "characteristics": ["Three Amigos participation", "Continuous testing", "Test-driven development support", "Cross-functional collaboration"]
+        },
+        {
+          "level": 4,
+          "name": "Proficient",
+          "description": "Advanced agile testing leadership",
+          "characteristics": ["Agile testing coaching", "Continuous delivery enablement", "Testing in DevOps", "Agile metrics and improvement"]
+        },
+        {
+          "level": 5,
+          "name": "Expert",
+          "description": "Agile testing transformation and innovation",
+          "characteristics": ["Agile transformation leadership", "Testing culture evolution", "Agile testing methodology innovation", "Industry thought leadership"]
+        }
+      ]
+    }
+  ]
+}

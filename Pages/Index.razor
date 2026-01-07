@@ -1,0 +1,324 @@
+﻿@page "/"
+@using CompetencyApp.Services
+@inject SliderService SliderService
+
+<PageTitle>CompetencyApp - Professional Competency Assessment</PageTitle>
+
+<div class="hero-section bg-primary text-white py-5 mb-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold mb-3">
+                    <span class="oi oi-dashboard me-3"></span>
+                    Competency App
+                </h1>
+                <p class="lead mb-4">
+                    A comprehensive professional competency assessment platform built with Blazor Server. 
+                    Track your skills across multiple engineering disciplines using the proven Dreyfus Model and visualize your growth with interactive radar charts.
+                </p>
+                <div class="d-flex gap-3 flex-wrap">
+                    @foreach (var competencyType in availableCompetencies)
+                    {
+                        var displayName = SliderService.GetCompetencyDisplayName(competencyType);
+                        <a href="/sliders/@competencyType" class="btn btn-warning btn-lg mb-2">
+                            <span class="oi oi-task me-2"></span>@displayName Assessment
+                        </a>
+                    }
+                </div>
+            </div>
+            <div class="col-lg-4 text-center">
+                <div class="feature-icon-large">
+                    <span class="oi oi-cog display-1 text-warning"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row mb-5">
+        <div class="col-lg-12">
+            <h2 class="text-center mb-4">Available Competency Frameworks</h2>
+            <div class="row">
+                @foreach (var competencyType in availableCompetencies)
+                {
+                    var displayName = SliderService.GetCompetencyDisplayName(competencyType);
+                    var description = GetCompetencyDescription(competencyType);
+                    var iconClass = GetCompetencyIcon(competencyType);
+                    
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header bg-@GetCompetencyColor(competencyType) text-white">
+                                <h5 class="mb-0">
+                                    <span class="oi oi-@iconClass me-2"></span>@displayName
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <p class="text-muted">@description</p>
+                                <div class="d-flex gap-2 mt-3">
+                                    <a href="/sliders/@competencyType" class="btn btn-primary btn-sm">
+                                        <span class="oi oi-task me-1"></span>Assessment
+                                    </a>
+                                    <a href="/competency-radar/@competencyType" class="btn btn-outline-primary btn-sm">
+                                        <span class="oi oi-target me-1"></span>Radar Chart
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-lg-12">
+            <h2 class="text-center mb-4">How It Works</h2>
+            <div class="row">
+                <div class="col-md-4 text-center mb-4">
+                    <div class="feature-box">
+                        <div class="feature-icon mb-3">
+                            <span class="oi oi-task display-3 text-primary"></span>
+                        </div>
+                        <h4>Assess Your Skills</h4>
+                        <p class="text-muted">
+                            Rate yourself across comprehensive competency frameworks using the 5-level Dreyfus Model: 
+                            Novice, Advanced Beginner, Competent, Proficient, and Expert.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-4 text-center mb-4">
+                    <div class="feature-box">
+                        <div class="feature-icon mb-3">
+                            <span class="oi oi-pencil display-3 text-success"></span>
+                        </div>
+                        <h4>Add Personal Notes</h4>
+                        <p class="text-muted">
+                            Document your experiences, learning goals, and specific examples for each competency level. 
+                            Track your progress with detailed personal observations.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-4 text-center mb-4">
+                    <div class="feature-box">
+                        <div class="feature-icon mb-3">
+                            <span class="oi oi-target display-3 text-info"></span>
+                        </div>
+                        <h4>Visualize Growth</h4>
+                        <p class="text-muted">
+                            View your competency profile with interactive radar charts for each discipline. 
+                            Identify strengths, growth areas, and track your professional development over time.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-lg-8">
+            <div class="card h-100">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <span class="oi oi-hard-drive me-2"></span>Data Storage & Privacy
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6><span class="oi oi-browser me-2 text-primary"></span>Local Browser Storage</h6>
+                        <p class="mb-2">Your competency ratings and personal notes are stored locally in your browser using HTML5 localStorage. Each competency framework maintains separate storage:</p>
+                        <ul class="list-unstyled ms-3">
+                            <li><span class="oi oi-shield text-success me-2"></span>Complete privacy - data never leaves your device</li>
+                            <li><span class="oi oi-check text-success me-2"></span>Instant access - no network required</li>
+                            <li><span class="oi oi-reload text-info me-2"></span>Persistent across browser sessions</li>
+                            <li><span class="oi oi-layers text-info me-2"></span>Separate storage for each competency type</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6><span class="oi oi-data-transfer-download me-2 text-success"></span>Export Your Data</h6>
+                        <p class="mb-0">Download your complete assessment as a JSON file for:</p>
+                        <ul class="list-unstyled ms-3">
+                            <li><span class="oi oi-document text-primary me-2"></span>Portfolio documentation</li>
+                            <li><span class="oi oi-people text-primary me-2"></span>Performance reviews</li>
+                            <li><span class="oi oi-transfer text-primary me-2"></span>Sharing with mentors</li>
+                        </ul>
+                    </div>
+
+                    <div class="alert alert-light border">
+                        <small>
+                            <strong>Note:</strong> Each competency framework stores data independently. 
+                            Regular exports are recommended to maintain your progress history.
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card h-100">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <span class="oi oi-plus me-2"></span>Add New Competency Framework
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <h6>Easy Framework Extension</h6>
+                    <p class="small mb-3">Add new competency types by following this simple process:</p>
+                    
+                    <ol class="small">
+                        <li class="mb-2">
+                            <strong>Create JSON File</strong>
+                            <br>Add a new file: <code>wwwroot/data/[TYPE]Competency.json</code>
+                        </li>
+                        <li class="mb-2">
+                            <strong>Define Structure</strong>
+                            <br>Follow the existing JSON schema with competencies and Dreyfus levels
+                        </li>
+                        <li class="mb-2">
+                            <strong>Automatic Discovery</strong>
+                            <br>The app automatically detects and loads new competency files
+                        </li>
+                        <li class="mb-2">
+                            <strong>Update Display Names</strong>
+                            <br>Optionally add display name mapping in SliderService
+                        </li>
+                    </ol>
+
+                    <div class="alert alert-info p-2">
+                        <small>
+                            <strong>Examples:</strong> 
+                            <code>PMCompetency.json</code> for Project Manager,
+                            <code>BACompetency.json</code> for Business Analyst
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-lg-12">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <h4 class="mb-3">The Dreyfus Model of Skill Acquisition</h4>
+                    <div class="row">
+                        <div class="col">
+                            <span class="badge bg-secondary p-2">1. Novice</span>
+                            <small class="d-block text-muted mt-1">Learning fundamentals</small>
+                        </div>
+                        <div class="col">
+                            <span class="badge bg-warning p-2">2. Advanced Beginner</span>
+                            <small class="d-block text-muted mt-1">Can work with guidance</small>
+                        </div>
+                        <div class="col">
+                            <span class="badge bg-primary p-2">3. Competent</span>
+                            <small class="d-block text-muted mt-1">Works independently</small>
+                        </div>
+                        <div class="col">
+                            <span class="badge bg-info p-2">4. Proficient</span>
+                            <small class="d-block text-muted mt-1">Intuitive problem solving</small>
+                        </div>
+                        <div class="col">
+                            <span class="badge bg-success p-2">5. Expert</span>
+                            <small class="d-block text-muted mt-1">Innovates and leads</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-lg-12 text-center">
+            <h3 class="mb-4">Ready to Begin Your Assessment?</h3>
+            <p class="lead text-muted mb-4">
+                Start tracking your software engineering competencies today and visualize your professional growth journey.
+            </p>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="/sliders" class="btn btn-primary btn-lg">
+                    <span class="oi oi-task me-2"></span>Start Assessment
+                </a>
+                <a href="/competency-radar" class="btn btn-outline-primary btn-lg">
+                    <span class="oi oi-target me-2"></span>View Example Chart
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    }
+
+    .feature-box {
+        padding: 2rem 1rem;
+        height: 100%;
+        transition: transform 0.2s ease-in-out;
+    }
+
+    .feature-box:hover {
+        transform: translateY(-5px);
+    }
+
+    .feature-icon-large {
+        opacity: 0.8;
+    }
+
+    .card {
+        border: none;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        transition: box-shadow 0.15s ease-in-out;
+    }
+
+    .card:hover {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+
+    .btn {
+        transition: all 0.2s ease-in-out;
+    }
+
+    .btn:hover {
+        transform: translateY(-1px);
+    }
+</style>
+
+@code {
+    private List<string> availableCompetencies = new();
+
+    protected override void OnInitialized()
+    {
+        availableCompetencies = SliderService.GetAvailableCompetencyTypes();
+    }
+
+    private string GetCompetencyDescription(string competencyType)
+    {
+        return competencyType switch
+        {
+            "SE" => "Comprehensive software engineering competencies covering frontend, backend, DevOps, testing, tools, and soft skills. Perfect for developers across all experience levels.",
+            "QA" => "Specialized quality assurance framework covering test strategy, automation, performance testing, security testing, defect management, and agile QA practices.",
+            _ => $"Professional competency framework for {SliderService.GetCompetencyDisplayName(competencyType)} roles."
+        };
+    }
+
+    private string GetCompetencyIcon(string competencyType)
+    {
+        return competencyType switch
+        {
+            "SE" => "code",
+            "QA" => "check",
+            _ => "briefcase"
+        };
+    }
+
+    private string GetCompetencyColor(string competencyType)
+    {
+        return competencyType switch
+        {
+            "SE" => "primary",
+            "QA" => "success",
+            _ => "info"
+        };
+    }
+}
