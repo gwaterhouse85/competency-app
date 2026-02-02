@@ -97,7 +97,7 @@ dotnet run
 ### Conducting Assessments
 
 1. **Select Framework**: Choose Software Engineer or QA Engineer from the navigation
-2. **Rate Skills**: Use sliders to rate yourself on the 1-5 Dreyfus scale
+2. **Rate Skills**: Use the sliders to rate yourself on the 1-5 Dreyfus scale
 3. **Add Notes**: Document specific examples and learning goals
 4. **View Progress**: Check the competency summary for overall progress
 
