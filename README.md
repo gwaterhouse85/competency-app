@@ -300,9 +300,12 @@ The AI suggestions feature requires an Azure OpenAI instance. Configure the foll
 
 | Setting | Description | Example |
 |---------|-------------|--------|
+| `Enabled` | Enable/disable AI suggestions feature | `true` or `false` |
 | `Endpoint` | Your Azure OpenAI resource endpoint | `https://your-instance.openai.azure.com/` |
 | `ApiKey` | API key from Azure Portal | `abc123...` |
 | `DeploymentName` | Name of your deployed model | `gpt-35-turbo-1106` |
+
+> **Note**: Set `Enabled` to `false` in `appsettings.json` (default) and `true` in `appsettings.Development.json` to only enable AI features when credentials are configured.
 
 **Supported Models**: The application is tested with GPT-3.5 Turbo and GPT-4 deployments.
 

@@ -3,6 +3,7 @@
 @using CompetencyApp.Services
 @inject SliderService SliderService
 @inject AzureOpenAIService AzureOpenAIService
+@inject AzureOpenAISettings AzureOpenAISettings
 @inject IJSRuntime JSRuntime
 
 <PageTitle>@GetPageTitle() - Radar Chart</PageTitle>
@@ -107,27 +108,29 @@ else
         </div>
     </div>
 
-    <div class="row mt-4">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">AI-Powered Improvement Suggestions</h5>
-                    <button class="btn btn-light btn-sm" @onclick="GetAISuggestions" disabled="@isLoadingSuggestions">
-                        @if (isLoadingSuggestions)
+    @if (AzureOpenAISettings.Enabled)
+    {
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">AI-Powered Improvement Suggestions</h5>
+                        <button class="btn btn-light btn-sm" @onclick="GetAISuggestions" disabled="@isLoadingSuggestions">
+                            @if (isLoadingSuggestions)
+                            {
+                                <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                                <span>Generating...</span>
+                            }
+                            else
+                            {
+                                <i class="oi oi-bolt"></i>
+                                <span>Get AI Suggestions</span>
+                            }
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        @if (aiSuggestions == null || !aiSuggestions.Any())
                         {
-                            <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-                            <span>Generating...</span>
-                        }
-                        else
-                        {
-                            <i class="oi oi-bolt"></i>
-                            <span>Get AI Suggestions</span>
-                        }
-                    </button>
-                </div>
-                <div class="card-body">
-                    @if (aiSuggestions == null || !aiSuggestions.Any())
-                    {
                         <p class="text-muted mb-0">
                             <i class="oi oi-info"></i>
                             Click "Get AI Suggestions" to receive personalized recommendations for improving each competency based on your scores and notes.
@@ -188,6 +191,7 @@ else
             </div>
         </div>
     </div>
+    }
 }
 
 @code {
