@@ -6,7 +6,8 @@ A comprehensive Blazor Server Application for assessing and tracking professiona
 
 - **Multi-Framework Support**: Software Engineer (SE) and QA Engineer (QA) competency frameworks with extensible architecture
 - **Dreyfus Model Integration**: 5-level skill assessment (Novice → Advanced Beginner → Competent → Proficient → Expert)
-- **Interactive Radar Charts**: Visual representation of competency profiles using HTML5 Canvas.
+- **Interactive Radar Charts**: Visual representation of competency profiles using HTML5 Canvas
+- **AI-Powered Suggestions**: Get personalized improvement recommendations using Azure OpenAI
 - **Local Storage Persistence**: Client-side data storage with separate namespaces per competency type
 - **Real-time Feedback**: Dynamic level descriptions and characteristics as you adjust ratings
 - **Personal Notes System**: Document experiences, goals, and learning resources for each competency
@@ -22,7 +23,8 @@ CompetencyApp/
 ├── Data/                          # Data models and entities
 │   └── SliderModel.cs            # Core competency and level models
 ├── Services/                      # Business logic and data services
-│   └── SliderService.cs          # Competency data loading and management
+│   ├── SliderService.cs          # Competency data loading and management
+│   └── AzureOpenAIService.cs     # AI-powered suggestion generation
 ├── Pages/                         # Razor pages and components
 │   ├── Index.razor               # Homepage with framework overview
 │   ├── Sliders.razor             # Main competency assessment interface
@@ -53,6 +55,7 @@ CompetencyApp/
 
 - **.NET 9.0**: Target framework
 - **Blazor Server**: Interactive web UI framework
+- **Azure OpenAI**: AI-powered competency improvement suggestions
 - **Bootstrap 5**: CSS framework for responsive design
 - **HTML5 Canvas**: Radar chart rendering
 - **JSON Configuration**: File-based competency framework definitions
@@ -63,6 +66,7 @@ CompetencyApp/
 - [.NET 9.0 SDK](https://dotnet.microsoft.com/download/dotnet/9.0) or later
 - Web browser with JavaScript enabled
 - Code editor (Visual Studio, VS Code, or JetBrains Rider recommended)
+- Azure OpenAI instance (for AI suggestions feature)
 
 ## 🚀 Getting Started
 
@@ -74,23 +78,52 @@ cd CompetencyApp
 dotnet restore
 ```
 
-### 2. Build the Application
+### 2. Configure Azure OpenAI
+
+To enable AI-powered suggestions, configure your Azure OpenAI credentials:
+
+**Option A: Using appsettings.Development.json (Recommended for local development)**
+
+Create or update `appsettings.Development.json` with your Azure OpenAI settings:
+
+```json
+{
+  "AzureOpenAI": {
+    "Endpoint": "https://your-instance.openai.azure.com/",
+    "ApiKey": "your-api-key",
+    "DeploymentName": "your-deployment-name"
+  }
+}
+```
+
+> ⚠️ **Note**: `appsettings.Development.json` is included in `.gitignore` to prevent accidental commits of sensitive data.
+
+**Option B: Using Environment Variables (Recommended for production)**
+
+```bash
+export AzureOpenAI__Endpoint="https://your-instance.openai.azure.com/"
+export AzureOpenAI__ApiKey="your-api-key"
+export AzureOpenAI__DeploymentName="your-deployment-name"
+```
+
+### 3. Build the Application
 
 ```bash
 dotnet build
 ```
 
-### 3. Run the Development Server
+### 4. Run the Development Server
 
 ```bash
 dotnet run
 ```
 
-### 4. Access the Application
+### 5. Access the Application
 
 1. Navigate to the homepage to see available competency frameworks
 2. Click on any framework to start an assessment
 3. Use the navigation menu to switch between assessments and radar charts
+4. On the Radar Chart page, click "Get AI Suggestions" for personalized improvement recommendations
 
 ## 🎯 Usage Guide
 
@@ -261,8 +294,23 @@ ASPNETCORE_URLS=https://localhost:5001;http://localhost:5000
 ASPNETCORE_ENVIRONMENT=Production
 ```
 
+### Azure OpenAI Configuration
+
+The AI suggestions feature requires an Azure OpenAI instance. Configure the following settings:
+
+| Setting | Description | Example |
+|---------|-------------|--------|
+| `Endpoint` | Your Azure OpenAI resource endpoint | `https://your-instance.openai.azure.com/` |
+| `ApiKey` | API key from Azure Portal | `abc123...` |
+| `DeploymentName` | Name of your deployed model | `gpt-35-turbo-1106` |
+
+**Supported Models**: The application is tested with GPT-3.5 Turbo and GPT-4 deployments.
+
 ### Application Settings
 Configuration is managed through `appsettings.json` and `appsettings.Development.json`.
+
+- `appsettings.json` - Contains placeholder values, safe to commit
+- `appsettings.Development.json` - Contains your actual credentials, excluded from git
 
 ## 🚀 Deployment
 
