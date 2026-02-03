@@ -2,6 +2,7 @@
 @using CompetencyApp.Data
 @using CompetencyApp.Services
 @inject SliderService SliderService
+@inject AzureOpenAIService AzureOpenAIService
 @inject IJSRuntime JSRuntime
 
 <PageTitle>@GetPageTitle() - Radar Chart</PageTitle>
@@ -105,6 +106,88 @@ else
             </div>
         </div>
     </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">AI-Powered Improvement Suggestions</h5>
+                    <button class="btn btn-light btn-sm" @onclick="GetAISuggestions" disabled="@isLoadingSuggestions">
+                        @if (isLoadingSuggestions)
+                        {
+                            <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                            <span>Generating...</span>
+                        }
+                        else
+                        {
+                            <i class="oi oi-bolt"></i>
+                            <span>Get AI Suggestions</span>
+                        }
+                    </button>
+                </div>
+                <div class="card-body">
+                    @if (aiSuggestions == null || !aiSuggestions.Any())
+                    {
+                        <p class="text-muted mb-0">
+                            <i class="oi oi-info"></i>
+                            Click "Get AI Suggestions" to receive personalized recommendations for improving each competency based on your scores and notes.
+                        </p>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th style="width: 20%;">Competency</th>
+                                        <th style="width: 10%;" class="text-center">Score</th>
+                                        <th style="width: 25%;">Your Notes</th>
+                                        <th style="width: 45%;">AI Suggestion</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var categoryGroup in aiSuggestions.GroupBy(s => s.Category))
+                                    {
+                                        <tr class="table-secondary">
+                                            <td colspan="4"><strong>@categoryGroup.Key</strong></td>
+                                        </tr>
+                                        @foreach (var suggestion in categoryGroup)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <strong>@suggestion.CompetencyName</strong>
+                                                </td>
+                                                <td class="text-center">
+                                                    <span class="badge bg-@GetLevelBadgeColor(suggestion.CurrentScore) fs-6">
+                                                        @suggestion.CurrentScore/5
+                                                    </span>
+                                                    <br>
+                                                    <small class="text-muted">@suggestion.LevelName</small>
+                                                </td>
+                                                <td>
+                                                    @if (!string.IsNullOrWhiteSpace(suggestion.UserNotes))
+                                                    {
+                                                        <small>@suggestion.UserNotes</small>
+                                                    }
+                                                    else
+                                                    {
+                                                        <small class="text-muted fst-italic">No notes provided</small>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    <small>@suggestion.AISuggestion</small>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
 }
 
 @code {
@@ -112,12 +195,16 @@ else
     
     private List<SliderModel>? sliders;
     private Dictionary<int, int> sliderValues = new();
+    private Dictionary<int, string> sliderNotes = new();
     private Dictionary<string, double> categoryAverages = new();
     private List<(string Category, double Average)> growthAreas = new();
     private List<(string Category, double Average)> strongAreas = new();
+    private List<CompetencySuggestion>? aiSuggestions;
     private bool isDataLoaded = false;
+    private bool isLoadingSuggestions = false;
     private string? previousCompetencyType = null;
     private string VALUES_STORAGE_KEY => $"slider_values_{CompetencyType}";
+    private string NOTES_STORAGE_KEY => $"slider_notes_{CompetencyType}";
 
     protected override async Task OnInitializedAsync()
     {
@@ -144,9 +231,11 @@ else
             
             // Reset state for new competency type
             sliderValues.Clear();
+            sliderNotes.Clear();
             categoryAverages.Clear();
             growthAreas.Clear();
             strongAreas.Clear();
+            aiSuggestions = null;
             isDataLoaded = false;
             
             // Load new data
@@ -188,6 +277,17 @@ else
                     sliderValues = storedValues;
                 }
             }
+
+            // Load notes
+            var savedNotes = await JSRuntime.InvokeAsync<string>("localStorageHelper.getCompetencyNotes");
+            if (!string.IsNullOrEmpty(savedNotes))
+            {
+                var storedNotes = System.Text.Json.JsonSerializer.Deserialize<Dictionary<int, string>>(savedNotes);
+                if (storedNotes != null)
+                {
+                    sliderNotes = storedNotes;
+                }
+            }
             
             // Set defaults for missing values
             foreach (var slider in sliders!)
@@ -195,6 +295,10 @@ else
                 if (!sliderValues.ContainsKey(slider.Id))
                 {
                     sliderValues[slider.Id] = slider.DefaultValue;
+                }
+                if (!sliderNotes.ContainsKey(slider.Id))
+                {
+                    sliderNotes[slider.Id] = string.Empty;
                 }
             }
         }
@@ -206,6 +310,7 @@ else
             foreach (var slider in sliders!)
             {
                 sliderValues[slider.Id] = slider.DefaultValue;
+                sliderNotes[slider.Id] = string.Empty;
             }
         }
     }
@@ -292,5 +397,37 @@ else
             5 => "success",
             _ => "secondary"
         };
+    }
+
+    private async Task GetAISuggestions()
+    {
+        if (sliders == null || !sliders.Any())
+        {
+            return;
+        }
+
+        isLoadingSuggestions = true;
+        StateHasChanged();
+
+        try
+        {
+            await JSRuntime.InvokeVoidAsync("console.log", "Generating AI suggestions...");
+            
+            aiSuggestions = await AzureOpenAIService.GetCompetencySuggestionsAsync(
+                sliders,
+                sliderValues,
+                sliderNotes);
+            
+            await JSRuntime.InvokeVoidAsync("console.log", $"Generated {aiSuggestions.Count} suggestions");
+        }
+        catch (Exception ex)
+        {
+            await JSRuntime.InvokeVoidAsync("console.error", "Error getting AI suggestions:", ex.Message);
+        }
+        finally
+        {
+            isLoadingSuggestions = false;
+            StateHasChanged();
+        }
     }
 }

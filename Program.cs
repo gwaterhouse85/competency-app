@@ -9,6 +9,12 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<SliderService>();
 
+// Configure Azure OpenAI
+var azureOpenAISettings = new AzureOpenAISettings();
+builder.Configuration.GetSection("AzureOpenAI").Bind(azureOpenAISettings);
+builder.Services.AddSingleton(azureOpenAISettings);
+builder.Services.AddHttpClient<AzureOpenAIService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

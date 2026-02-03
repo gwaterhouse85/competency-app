@@ -89,3 +89,6 @@ BenchmarkDotNet.Artifacts/
 # CSS/JS source maps (large files not needed in repo)
 *.css.map
 *.js.map
+
+# Local development settings with secrets
+appsettings.Development.json
