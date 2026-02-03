@@ -11,22 +11,31 @@ window.localStorageHelper = {
     clear: function () {
         localStorage.clear();
     },
-    // Helper methods for competency data
-    getCompetencyValues: function () {
-        return localStorage.getItem('slider_values');
+    // Helper methods for competency data (with competency type support)
+    getCompetencyValues: function (competencyType) {
+        const key = competencyType ? `slider_values_${competencyType}` : 'slider_values';
+        return localStorage.getItem(key);
     },
-    setCompetencyValues: function (values) {
-        localStorage.setItem('slider_values', values);
+    setCompetencyValues: function (values, competencyType) {
+        const key = competencyType ? `slider_values_${competencyType}` : 'slider_values';
+        localStorage.setItem(key, values);
     },
-    getCompetencyNotes: function () {
-        return localStorage.getItem('slider_notes');
+    getCompetencyNotes: function (competencyType) {
+        const key = competencyType ? `slider_notes_${competencyType}` : 'slider_notes';
+        return localStorage.getItem(key);
     },
-    setCompetencyNotes: function (notes) {
-        localStorage.setItem('slider_notes', notes);
+    setCompetencyNotes: function (notes, competencyType) {
+        const key = competencyType ? `slider_notes_${competencyType}` : 'slider_notes';
+        localStorage.setItem(key, notes);
     },
-    clearCompetencyData: function () {
-        localStorage.removeItem('slider_values');
-        localStorage.removeItem('slider_notes');
+    clearCompetencyData: function (competencyType) {
+        if (competencyType) {
+            localStorage.removeItem(`slider_values_${competencyType}`);
+            localStorage.removeItem(`slider_notes_${competencyType}`);
+        } else {
+            localStorage.removeItem('slider_values');
+            localStorage.removeItem('slider_notes');
+        }
     }
 };
 

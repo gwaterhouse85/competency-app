@@ -272,7 +272,8 @@ else
     {
         try
         {
-            var savedValues = await JSRuntime.InvokeAsync<string>("localStorageHelper.getItem", VALUES_STORAGE_KEY);
+            // Load values using the same method as Sliders.razor
+            var savedValues = await JSRuntime.InvokeAsync<string>("localStorageHelper.getCompetencyValues", CompetencyType);
             if (!string.IsNullOrEmpty(savedValues))
             {
                 var storedValues = System.Text.Json.JsonSerializer.Deserialize<Dictionary<int, int>>(savedValues);
@@ -283,7 +284,7 @@ else
             }
 
             // Load notes
-            var savedNotes = await JSRuntime.InvokeAsync<string>("localStorageHelper.getCompetencyNotes");
+            var savedNotes = await JSRuntime.InvokeAsync<string>("localStorageHelper.getCompetencyNotes", CompetencyType);
             if (!string.IsNullOrEmpty(savedNotes))
             {
                 var storedNotes = System.Text.Json.JsonSerializer.Deserialize<Dictionary<int, string>>(savedNotes);

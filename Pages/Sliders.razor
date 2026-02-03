@@ -185,7 +185,7 @@ else
         try
         {
             // Load slider values
-            var savedValues = await JSRuntime.InvokeAsync<string>("localStorageHelper.getCompetencyValues");
+            var savedValues = await JSRuntime.InvokeAsync<string>("localStorageHelper.getCompetencyValues", CompetencyType);
             if (!string.IsNullOrEmpty(savedValues))
             {
                 var storedValues = System.Text.Json.JsonSerializer.Deserialize<Dictionary<int, int>>(savedValues);
@@ -196,7 +196,7 @@ else
             }
 
             // Load slider notes
-            var savedNotes = await JSRuntime.InvokeAsync<string>("localStorageHelper.getCompetencyNotes");
+            var savedNotes = await JSRuntime.InvokeAsync<string>("localStorageHelper.getCompetencyNotes", CompetencyType);
             if (!string.IsNullOrEmpty(savedNotes))
             {
                 var storedNotes = System.Text.Json.JsonSerializer.Deserialize<Dictionary<int, string>>(savedNotes);
@@ -237,7 +237,7 @@ else
         try
         {
             var json = System.Text.Json.JsonSerializer.Serialize(sliderValues);
-            await JSRuntime.InvokeVoidAsync("localStorageHelper.setCompetencyValues", json);
+            await JSRuntime.InvokeVoidAsync("localStorageHelper.setCompetencyValues", json, CompetencyType);
         }
         catch (Exception ex)
         {
@@ -250,7 +250,7 @@ else
         try
         {
             var json = System.Text.Json.JsonSerializer.Serialize(sliderNotes);
-            await JSRuntime.InvokeVoidAsync("localStorageHelper.setCompetencyNotes", json);
+            await JSRuntime.InvokeVoidAsync("localStorageHelper.setCompetencyNotes", json, CompetencyType);
         }
         catch (Exception ex)
         {
@@ -359,7 +359,7 @@ else
 
     private async Task ClearStorage()
     {
-        await JSRuntime.InvokeVoidAsync("localStorageHelper.clearCompetencyData");
+        await JSRuntime.InvokeVoidAsync("localStorageHelper.clearCompetencyData", CompetencyType);
         
         if (sliders != null)
         {
