@@ -1,0 +1,476 @@
+@page "/career-map/{competencyType?}"
+@using CompetencyApp.Data
+@using CompetencyApp.Services
+@inject SliderService SliderService
+@inject IJSRuntime JSRuntime
+
+<PageTitle>@GetPageTitle() - Career Map</PageTitle>
+
+<h1>@GetPageTitle() Career Map</h1>
+<p class="lead">See where your competencies place you on the career ladder and what to develop next</p>
+
+@if (sliders == null || !isDataLoaded)
+{
+    <p><em>Loading competency data...</em></p>
+}
+else if (!sliders.Any())
+{
+    <p><em>No competency data available.</em></p>
+}
+else
+{
+    @* Overall career level banner *@
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card career-level-banner @GetOverallLevelClass()">
+                <div class="card-body d-flex align-items-center justify-content-between flex-wrap">
+                    <div>
+                        <h3 class="mb-1">Overall Career Level: <strong>@GetOverallCareerLevel()</strong></h3>
+                        <p class="mb-0 opacity-75">Based on your average competency score of @GetOverallAverage().ToString("F1") / 5.0</p>
+                    </div>
+                    <div class="text-end">
+                        @if (GetNextCareerLevel() is string nextLevel)
+                        {
+                            <span class="badge bg-light text-dark fs-6">Next target: @nextLevel</span>
+                            <br />
+                            <small class="opacity-75">@GetGapSummary()</small>
+                        }
+                        else
+                        {
+                            <span class="badge bg-light text-dark fs-6">You've reached the top!</span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* Career progression ladder *@
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">Career Progression Ladder</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="career-ladder">
+                        @foreach (var tier in careerTiers)
+                        {
+                            var isCurrentTier = tier.Name == GetOverallCareerLevel();
+                            var isPastTier = tier.MinScore <= GetOverallAverage();
+                            <div class="career-tier @(isCurrentTier ? "current" : isPastTier ? "achieved" : "future")">
+                                <div class="tier-marker">
+                                    @if (isCurrentTier)
+                                    {
+                                        <span class="oi oi-person"></span>
+                                    }
+                                    else if (isPastTier)
+                                    {
+                                        <span class="oi oi-check"></span>
+                                    }
+                                    else
+                                    {
+                                        <span class="oi oi-lock-locked"></span>
+                                    }
+                                </div>
+                                <div class="tier-info">
+                                    <strong>@tier.Name</strong>
+                                    <br />
+                                    <small class="text-muted">Avg @tier.MinScore.ToString("F1")–@tier.MaxScore.ToString("F1")</small>
+                                </div>
+                                <div class="tier-bar-bg">
+                                    <div class="tier-bar-fill" style="width: @GetTierFillPercent(tier)%"></div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* Heatmap matrix: categories vs career levels *@
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Competency Heatmap by Category</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered career-heatmap mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="category-col">Category</th>
+                                    @foreach (var tier in careerTiers)
+                                    {
+                                        <th class="text-center tier-header">@tier.Name</th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var category in sliders.GroupBy(s => s.Category))
+                                {
+                                    var categoryAvg = GetCategoryAverage(category.Key);
+                                    <tr>
+                                        <td class="category-col">
+                                            <strong>@category.Key</strong>
+                                            <br />
+                                            <small class="text-muted">Avg: @categoryAvg.ToString("F1")</small>
+                                        </td>
+                                        @foreach (var tier in careerTiers)
+                                        {
+                                            var cellClass = GetHeatmapCellClass(categoryAvg, tier);
+                                            <td class="text-center heatmap-cell @cellClass">
+                                                @if (cellClass == "cell-current")
+                                                {
+                                                    <span class="oi oi-target"></span>
+                                                }
+                                                else if (cellClass == "cell-achieved")
+                                                {
+                                                    <span class="oi oi-check"></span>
+                                                }
+                                            </td>
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* Detailed competency breakdown per category *@
+    <div class="row">
+        @foreach (var category in sliders.GroupBy(s => s.Category))
+        {
+            var categoryAvg = GetCategoryAverage(category.Key);
+            var categoryTier = GetCareerLevelForScore(categoryAvg);
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0">@category.Key</h6>
+                        <span class="badge @GetBadgeClassForTier(categoryTier)">@categoryTier</span>
+                    </div>
+                    <div class="card-body">
+                        @foreach (var slider in category)
+                        {
+                            var val = GetSliderValue(slider.Id);
+                            var normalised = NormaliseToFive(slider, val);
+                            var levelName = GetLevelName(normalised);
+                            <div class="competency-row mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="fw-bold small">@slider.Label</span>
+                                    <span class="badge bg-@GetLevelBadgeColor(normalised) badge-sm">@levelName</span>
+                                </div>
+                                <div class="career-progress-track">
+                                    @foreach (var tier in careerTiers)
+                                    {
+                                        <div class="career-progress-segment @(normalised >= tier.MinScore ? "filled" : "")"
+                                             title="@tier.Name (@tier.MinScore–@tier.MaxScore)">
+                                        </div>
+                                    }
+                                    <div class="career-progress-indicator" style="left: @GetProgressPercent(normalised)%">
+                                        <div class="indicator-dot"></div>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between mt-1">
+                                    <small class="text-muted">Junior</small>
+                                    <small class="text-muted">Principal</small>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    @* Next-level gap analysis *@
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">Gap Analysis — What to focus on for the next level</h5>
+                </div>
+                <div class="card-body">
+                    @if (gapItems.Any())
+                    {
+                        <div class="row">
+                            @foreach (var gap in gapItems.OrderByDescending(g => g.Gap).Take(8))
+                            {
+                                <div class="col-md-6 col-lg-3 mb-3">
+                                    <div class="card border-warning h-100 gap-card">
+                                        <div class="card-body p-3">
+                                            <h6 class="card-title small fw-bold text-truncate" title="@gap.Label">@gap.Label</h6>
+                                            <p class="card-text small text-muted mb-2 text-truncate" title="@gap.Category">@gap.Category</p>
+                                            <div class="d-flex flex-wrap gap-1">
+                                                <span class="badge bg-secondary">Now: @gap.CurrentLevelName</span>
+                                                <span class="badge bg-success">Target: @gap.TargetLevelName</span>
+                                            </div>
+                                            <div class="progress mt-2" style="height: 6px;">
+                                                <div class="progress-bar bg-warning" style="width: @(gap.ProgressPercent)%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-success mb-0">
+                            <span class="oi oi-check me-2"></span>
+                            You meet or exceed all competency expectations for your current level!
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public string? CompetencyType { get; set; } = "SE";
+
+    private List<SliderModel>? sliders;
+    private Dictionary<int, int> sliderValues = new();
+    private bool isDataLoaded = false;
+
+    // Career tiers mapped to Dreyfus levels
+    private readonly List<CareerTier> careerTiers = new()
+    {
+        new CareerTier { Name = "Junior", MinScore = 1.0, MaxScore = 1.99, Color = "#6c757d" },
+        new CareerTier { Name = "Mid-Level", MinScore = 2.0, MaxScore = 2.99, Color = "#ffc107" },
+        new CareerTier { Name = "Senior", MinScore = 3.0, MaxScore = 3.99, Color = "#0d6efd" },
+        new CareerTier { Name = "Staff", MinScore = 4.0, MaxScore = 4.49, Color = "#0dcaf0" },
+        new CareerTier { Name = "Principal", MinScore = 4.5, MaxScore = 5.0, Color = "#198754" },
+    };
+
+    private List<GapItem> gapItems = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        sliders = await SliderService.GetSlidersAsync(CompetencyType ?? "SE");
+        sliderValues.Clear();
+        isDataLoaded = false;
+
+        if (sliders != null)
+        {
+            await LoadValuesFromStorage();
+            ComputeGapAnalysis();
+            isDataLoaded = true;
+            StateHasChanged();
+        }
+    }
+
+    private async Task LoadValuesFromStorage()
+    {
+        try
+        {
+            var savedValues = await JSRuntime.InvokeAsync<string>("localStorageHelper.getCompetencyValues", CompetencyType);
+            if (!string.IsNullOrEmpty(savedValues))
+            {
+                var storedValues = System.Text.Json.JsonSerializer.Deserialize<Dictionary<int, int>>(savedValues);
+                if (storedValues != null)
+                    sliderValues = storedValues;
+            }
+
+            foreach (var slider in sliders!)
+            {
+                if (!sliderValues.ContainsKey(slider.Id))
+                    sliderValues[slider.Id] = slider.DefaultValue;
+            }
+        }
+        catch
+        {
+            foreach (var slider in sliders!)
+                sliderValues[slider.Id] = slider.DefaultValue;
+        }
+    }
+
+    // ---- helpers ----
+
+    private string GetPageTitle()
+    {
+        var displayName = SliderService.GetCompetencyDisplayName(CompetencyType ?? "SE");
+        return $"{displayName}";
+    }
+
+    private int GetSliderValue(int sliderId) =>
+        sliderValues.TryGetValue(sliderId, out var v) ? v : 1;
+
+    /// Normalise any slider value to a 1-5 Dreyfus scale.
+    private double NormaliseToFive(SliderModel slider, int rawValue)
+    {
+        if (slider.MaxValue <= 5) return rawValue;
+        // Linear interpolation 1-maxValue → 1-5
+        return 1.0 + (rawValue - slider.MinValue) * 4.0 / (slider.MaxValue - slider.MinValue);
+    }
+
+    private double GetOverallAverage()
+    {
+        if (sliders == null || !sliders.Any()) return 0;
+        return sliders.Average(s => NormaliseToFive(s, GetSliderValue(s.Id)));
+    }
+
+    private double GetCategoryAverage(string category)
+    {
+        var items = sliders!.Where(s => s.Category == category).ToList();
+        if (!items.Any()) return 0;
+        return items.Average(s => NormaliseToFive(s, GetSliderValue(s.Id)));
+    }
+
+    private string GetOverallCareerLevel() => GetCareerLevelForScore(GetOverallAverage());
+
+    private string GetCareerLevelForScore(double score)
+    {
+        for (int i = careerTiers.Count - 1; i >= 0; i--)
+        {
+            if (score >= careerTiers[i].MinScore)
+                return careerTiers[i].Name;
+        }
+        return careerTiers[0].Name;
+    }
+
+    private string? GetNextCareerLevel()
+    {
+        var current = GetOverallCareerLevel();
+        var idx = careerTiers.FindIndex(t => t.Name == current);
+        return idx < careerTiers.Count - 1 ? careerTiers[idx + 1].Name : null;
+    }
+
+    private string GetGapSummary()
+    {
+        var next = GetNextCareerLevel();
+        if (next == null) return "";
+        var nextTier = careerTiers.First(t => t.Name == next);
+        var gap = nextTier.MinScore - GetOverallAverage();
+        return gap > 0 ? $"+{gap:F1} avg needed" : "Almost there!";
+    }
+
+    private string GetOverallLevelClass()
+    {
+        var level = GetOverallCareerLevel();
+        return level switch
+        {
+            "Junior" => "banner-junior",
+            "Mid-Level" => "banner-mid",
+            "Senior" => "banner-senior",
+            "Staff" => "banner-staff",
+            "Principal" => "banner-principal",
+            _ => "banner-junior"
+        };
+    }
+
+    private double GetTierFillPercent(CareerTier tier)
+    {
+        var avg = GetOverallAverage();
+        if (avg >= tier.MaxScore) return 100;
+        if (avg < tier.MinScore) return 0;
+        return (avg - tier.MinScore) / (tier.MaxScore - tier.MinScore) * 100;
+    }
+
+    private string GetHeatmapCellClass(double categoryAvg, CareerTier tier)
+    {
+        if (categoryAvg >= tier.MaxScore) return "cell-achieved";
+        if (categoryAvg >= tier.MinScore) return "cell-current";
+        return "cell-future";
+    }
+
+    private string GetBadgeClassForTier(string tier) => tier switch
+    {
+        "Junior" => "bg-secondary",
+        "Mid-Level" => "bg-warning text-dark",
+        "Senior" => "bg-primary",
+        "Staff" => "bg-info",
+        "Principal" => "bg-success",
+        _ => "bg-secondary"
+    };
+
+    private string GetLevelBadgeColor(double level) => (int)Math.Round(level) switch
+    {
+        1 => "secondary",
+        2 => "warning",
+        3 => "primary",
+        4 => "info",
+        5 => "success",
+        _ => "secondary"
+    };
+
+    private string GetLevelName(double level) => (int)Math.Round(level) switch
+    {
+        1 => "Novice",
+        2 => "Adv. Beginner",
+        3 => "Competent",
+        4 => "Proficient",
+        5 => "Expert",
+        _ => "Unknown"
+    };
+
+    private double GetProgressPercent(double normalised) =>
+        Math.Clamp((normalised - 1.0) / 4.0 * 100, 0, 100);
+
+    private void ComputeGapAnalysis()
+    {
+        gapItems.Clear();
+        var nextLevel = GetNextCareerLevel();
+        if (nextLevel == null || sliders == null) return;
+
+        var nextTier = careerTiers.First(t => t.Name == nextLevel);
+
+        foreach (var slider in sliders)
+        {
+            var normalised = NormaliseToFive(slider, GetSliderValue(slider.Id));
+            if (normalised < nextTier.MinScore)
+            {
+                var target = (int)Math.Ceiling(nextTier.MinScore);
+                gapItems.Add(new GapItem
+                {
+                    Label = slider.Label,
+                    Category = slider.Category,
+                    CurrentLevel = normalised,
+                    TargetLevel = target,
+                    Gap = target - normalised,
+                    CurrentLevelName = GetLevelName(normalised),
+                    TargetLevelName = GetLevelName(target),
+                    ProgressPercent = (int)(normalised / target * 100)
+                });
+            }
+        }
+    }
+
+    // ---- inner types ----
+
+    private class CareerTier
+    {
+        public string Name { get; set; } = "";
+        public double MinScore { get; set; }
+        public double MaxScore { get; set; }
+        public string Color { get; set; } = "";
+    }
+
+    private class GapItem
+    {
+        public string Label { get; set; } = "";
+        public string Category { get; set; } = "";
+        public double CurrentLevel { get; set; }
+        public double TargetLevel { get; set; }
+        public double Gap { get; set; }
+        public string CurrentLevelName { get; set; } = "";
+        public string TargetLevelName { get; set; } = "";
+        public int ProgressPercent { get; set; }
+    }
+}

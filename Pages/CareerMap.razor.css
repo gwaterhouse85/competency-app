@@ -1,0 +1,240 @@
+/* ============ Career Level Banner ============ */
+.career-level-banner {
+    border: none;
+    color: #fff;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.banner-junior {
+    background: linear-gradient(135deg, #6c757d, #495057);
+}
+
+.banner-mid {
+    background: linear-gradient(135deg, #ffc107, #e0a800);
+    color: #212529 !important;
+}
+
+.banner-mid h3,
+.banner-mid p {
+    color: #212529;
+}
+
+.banner-senior {
+    background: linear-gradient(135deg, #0d6efd, #0a58ca);
+}
+
+.banner-staff {
+    background: linear-gradient(135deg, #0dcaf0, #0aa2c0);
+}
+
+.banner-principal {
+    background: linear-gradient(135deg, #198754, #146c43);
+}
+
+/* ============ Career Ladder ============ */
+.career-ladder {
+    display: flex;
+    align-items: stretch;
+    padding: 1.5rem;
+    gap: 0.5rem;
+}
+
+.career-tier {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 1rem 0.5rem;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.career-tier.achieved {
+    background: rgba(25, 135, 84, 0.1);
+    border: 2px solid #198754;
+}
+
+.career-tier.current {
+    background: rgba(13, 110, 253, 0.15);
+    border: 2px solid #0d6efd;
+    box-shadow: 0 0 15px rgba(13, 110, 253, 0.3);
+    transform: scale(1.05);
+}
+
+.career-tier.future {
+    background: rgba(108, 117, 125, 0.05);
+    border: 2px dashed #dee2e6;
+    opacity: 0.6;
+}
+
+.tier-marker {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.career-tier.achieved .tier-marker {
+    background: #198754;
+    color: #fff;
+}
+
+.career-tier.current .tier-marker {
+    background: #0d6efd;
+    color: #fff;
+    animation: pulse-dot 2s infinite;
+}
+
+.career-tier.future .tier-marker {
+    background: #dee2e6;
+    color: #6c757d;
+}
+
+@keyframes pulse-dot {
+    0% { box-shadow: 0 0 0 0 rgba(13, 110, 253, 0.5); }
+    70% { box-shadow: 0 0 0 10px rgba(13, 110, 253, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(13, 110, 253, 0); }
+}
+
+.tier-info {
+    margin-bottom: 0.75rem;
+}
+
+.tier-bar-bg {
+    width: 100%;
+    height: 6px;
+    background: #e9ecef;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.tier-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.5s ease;
+}
+
+.career-tier.achieved .tier-bar-fill {
+    background: #198754;
+    width: 100% !important;
+}
+
+.career-tier.current .tier-bar-fill {
+    background: #0d6efd;
+}
+
+.career-tier.future .tier-bar-fill {
+    background: #dee2e6;
+}
+
+/* ============ Heatmap Table ============ */
+.career-heatmap th {
+    font-size: 0.85rem;
+    vertical-align: middle;
+}
+
+.career-heatmap .category-col {
+    min-width: 160px;
+    white-space: nowrap;
+}
+
+.career-heatmap .tier-header {
+    min-width: 90px;
+}
+
+.heatmap-cell {
+    width: 90px;
+    height: 50px;
+    vertical-align: middle !important;
+    transition: all 0.3s ease;
+}
+
+.cell-achieved {
+    background-color: rgba(25, 135, 84, 0.25) !important;
+    color: #198754;
+    font-size: 1.1rem;
+}
+
+.cell-current {
+    background-color: rgba(13, 110, 253, 0.2) !important;
+    color: #0d6efd;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.cell-future {
+    background-color: rgba(108, 117, 125, 0.05) !important;
+}
+
+/* ============ Competency Progress Track ============ */
+.career-progress-track {
+    position: relative;
+    display: flex;
+    height: 10px;
+    border-radius: 5px;
+    overflow: visible;
+    background: #e9ecef;
+    gap: 2px;
+}
+
+.career-progress-segment {
+    flex: 1;
+    border-radius: 3px;
+    background: #e9ecef;
+    transition: background 0.3s ease;
+}
+
+.career-progress-segment.filled {
+    background: linear-gradient(90deg, #198754, #0d6efd);
+}
+
+.career-progress-indicator {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    transition: left 0.5s ease;
+}
+
+.indicator-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #0d6efd;
+    border: 3px solid #fff;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+/* ============ Responsiveness ============ */
+@@media (max-width: 768px) {
+    .career-ladder {
+        flex-direction: column;
+    }
+
+    .career-tier.current {
+        transform: scale(1.02);
+    }
+}
+
+/* ============ Gap Analysis Cards ============ */
+.gap-card {
+    overflow: hidden;
+    min-width: 0;
+}
+
+.gap-card .card-body {
+    overflow: hidden;
+    min-width: 0;
+}
+
+.gap-card .badge {
+    white-space: nowrap;
+    font-size: 0.75rem;
+}
