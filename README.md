@@ -63,7 +63,7 @@ CompetencyApp/
 
 ## 📋 Prerequisites
 
-- [.NET 9.0 SDK](https://dotnet.microsoft.com/download/dotnet/9.0) or later
+- [.NET 10.0 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) or later
 - Web browser with JavaScript enabled
 - Code editor (Visual Studio, VS Code, or JetBrains Rider recommended)
 - Azure OpenAI instance (for AI suggestions feature)
@@ -124,6 +124,122 @@ dotnet run
 2. Click on any framework to start an assessment
 3. Use the navigation menu to switch between assessments and radar charts
 4. On the Radar Chart page, click "Get AI Suggestions" for personalized improvement recommendations
+
+## 🐳 Docker Deployment
+
+### Building and Running with Docker
+
+#### Option 1: Build and Run Locally
+
+```bash
+# Build the Docker image
+docker build -t competency-app:latest .
+
+# Run the container
+docker run -p 8080:8080 competency-app:latest
+```
+
+Access the application at `http://localhost:8080`
+
+#### Option 2: Run with Environment Variables (for Azure OpenAI)
+
+```bash
+docker run -p 8080:8080 \
+  -e AzureOpenAI__Endpoint="https://your-instance.openai.azure.com/" \
+  -e AzureOpenAI__ApiKey="your-api-key" \
+  -e AzureOpenAI__DeploymentName="your-deployment-name" \
+  competency-app:latest
+```
+
+#### Option 3: Using Docker Compose
+
+Create a `docker-compose.yml` file:
+
+```yaml
+version: '3.8'
+
+services:
+  competency-app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - AzureOpenAI__Endpoint=${AZURE_OPENAI_ENDPOINT}
+      - AzureOpenAI__ApiKey=${AZURE_OPENAI_API_KEY}
+      - AzureOpenAI__DeploymentName=${AZURE_OPENAI_DEPLOYMENT_NAME}
+```
+
+Then run:
+
+```bash
+# Create a .env file with your Azure OpenAI settings
+echo "AZURE_OPENAI_ENDPOINT=https://your-instance.openai.azure.com/" > .env
+echo "AZURE_OPENAI_API_KEY=your-api-key" >> .env
+echo "AZURE_OPENAI_DEPLOYMENT_NAME=your-deployment-name" >> .env
+
+# Start the containers
+docker-compose up
+```
+
+### Pushing to AWS
+
+#### Step 1: Create AWS ECR Repository
+
+```bash
+aws ecr create-repository --repository-name competency-app --region us-east-1
+```
+
+#### Step 2: Tag and Push Image
+
+```bash
+# Get your AWS account ID
+ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+REGION=us-east-1
+REGISTRY=${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com
+
+# Login to ECR
+aws ecr get-login-password --region ${REGION} | \
+  docker login --username AWS --password-stdin ${REGISTRY}
+
+# Tag the image
+docker tag competency-app:latest ${REGISTRY}/competency-app:latest
+
+# Push to ECR
+docker push ${REGISTRY}/competency-app:latest
+```
+
+#### Step 3: Deploy to AWS App Runner
+
+1. Go to [AWS App Runner Console](https://console.aws.amazon.com/apprunner)
+2. Click "Create an App Runner service"
+3. Select "Container registry"
+4. Choose ECR and select your `competency-app` repository
+5. Configure:
+   - **Port**: 8080
+   - **Environment variables**: Add your Azure OpenAI credentials
+   - **CPU/Memory**: 1 vCPU, 2 GB (sufficient for this app)
+6. Click "Create & Deploy"
+
+Estimated monthly cost: **$5-20** depending on usage
+
+#### Step 4: Alternative - Deploy to Lightsail
+
+1. Go to [AWS Lightsail Console](https://lightsail.aws.amazon.com)
+2. Click "Create instance" → "Container service"
+3. Upload your `Dockerfile`
+4. Configure same environment variables
+5. Deploy
+
+Estimated monthly cost: **$3.50-5** (cheapest option)
+
+### Docker Image Details
+
+- **Base Image**: `mcr.microsoft.com/dotnet/aspnet:10.0` (runtime stage)
+- **Build Image**: `mcr.microsoft.com/dotnet/sdk:10.0` (build stage)
+- **Multi-stage Build**: Optimized image size (~200MB)
+- **Port**: 8080
+- **Environment**: Production by default
 
 ## 🎯 Usage Guide
 

@@ -41,11 +41,14 @@ else
                     <div class="mb-3">
                         <h6>Competency Levels</h6>
                         <div class="d-flex flex-column gap-2">
-                            <div><span class="badge bg-secondary">1</span> Novice</div>
-                            <div><span class="badge bg-warning">2</span> Advanced Beginner</div>
-                            <div><span class="badge bg-primary">3</span> Competent</div>
-                            <div><span class="badge bg-info">4</span> Proficient</div>
-                            <div><span class="badge bg-success">5</span> Expert</div>
+                            @if (sliders?.FirstOrDefault()?.Levels != null)
+                            {
+                                @foreach (var level in sliders.FirstOrDefault()!.Levels)
+                                {
+                                    var badgeColor = GetLevelBadgeColor(level.Level);
+                                    <div><span class="badge bg-@badgeColor">@level.Level</span> @level.Name</div>
+                                }
+                            }
                         </div>
                     </div>
                     
